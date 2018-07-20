@@ -1,0 +1,141 @@
+#common settings that generally should always be used with your language specific settings
+* text eol=crlf
+
+# Custom for Visual Studio
+*.sln text 
+*.csproj text
+*.vbproj text
+*.fsproj text
+*.dbproj text
+
+*.vcxproj text
+*.vcxitems text
+*.props text
+*.filters text
+
+#
+# The above will handle all files NOT found below
+#
+
+# Documents
+*.doc    -text diff=astextplain
+*.DOC    -text diff=astextplain
+*.docx   -text diff=astextplain
+*.DOCX   -text diff=astextplain
+*.dot    -text diff=astextplain
+*.DOT    -text diff=astextplain
+*.pdf    -text diff=astextplain
+*.PDF    -text diff=astextplain
+*.rtf    -text diff=astextplain
+*.RTF    -text diff=astextplain
+*.md text
+*.adoc text
+*.textile text
+*.mustache text
+*.csv text eol=crlf
+*.tab text
+*.tsv text
+*.sql text
+
+# source code
+*.cs text
+*.php text
+*.css text
+*.sass text
+*.scss text
+*.less text
+*.styl text
+*.js text
+*.ts text
+*.coffee text
+*.json text
+*.htm text
+*.html text
+*.xml text
+*.svg text
+*.txt text
+*.ini text
+*.inc text
+*.pl text
+*.rb text
+*.py text
+*.scm text
+*.sql text
+*.sh text
+*.bat text
+*.mof text
+*.ps1 text
+
+# templates
+*.ejs text
+*.hbt text
+*.jade text
+*.haml text
+*.hbs text
+*.dot text
+*.tmpl text
+*.phtml text
+*.latte text
+
+# server config
+.htaccess text
+
+# git config
+.gitattributes text
+.gitignore text
+.gitconfig text
+
+# code analysis config
+.jshintrc text
+.jscsrc text
+.jshintignore text
+.csslintrc text
+
+# misc config
+*.yaml text
+*.yml text
+.editorconfig text
+
+# build config
+*.npmignore text
+*.bowerrc text
+
+# Heroku
+Procfile text
+.slugignore text
+
+# Documentation
+LICENSE text
+AUTHORS text
+
+
+#
+## These files are binary and should be left untouched
+#
+
+# (binary is a macro for -text -diff)
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.mov binary
+*.mp4 binary
+*.mp3 binary
+*.flv binary
+*.fla binary
+*.swf binary
+*.gz binary
+*.zip binary
+*.7z binary
+*.ttf binary
+*.eot binary
+*.woff binary
+*.woff2 binary
+*.pyc binary
+*.pdf binary
+*.exe binary
+*.dll binary
+*.jar binary
+*.xlsx binary
+*.msg binary
