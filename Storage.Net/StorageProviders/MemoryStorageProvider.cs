@@ -9,19 +9,19 @@ namespace Storage.Net.StorageProviders
 {
     public class MemoryStorageProvider : IStorageProvider
     {
-        Dictionary<string, byte[]> dictionary = new Dictionary<string, byte[]>();
+        ConcurrentDictionary<string, byte[]> dictionary = new ConcurrentDictionary<string, byte[]>();
 
-        public bool IsThreadSafe { get; } = false;
+        public bool IsThreadSafe { get; } = true;
 
         public async Task CreateAsync(string key, Stream data)
         {
             MemoryStream memoryStream = await data.ToMemoryStreamAsync().ConfigureAwait(false);
-            dictionary.Add(key, memoryStream.ToArray());
+            dictionary.TryAdd(key, memoryStream.ToArray());
         }
 
         public Task DeleteAsync(string key)
         {
-            dictionary.Remove(key);
+            dictionary.TryRemove(key, out var stream);
             return Task.CompletedTask;
         }
 
@@ -33,8 +33,6 @@ namespace Storage.Net.StorageProviders
             Stream result = null;
             if (dictionary.TryGetValue(key, out byte[] byteContent))
                 result = new MemoryStream(byteContent);
-            else
-                result = default(Stream);
 
             return Task.FromResult(result);
         }

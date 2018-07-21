@@ -6,6 +6,8 @@ using Storage.Net.Core;
 using Storage.Net.Serializers;
 using Storage.Net.StorageProviders;
 using System.Linq;
+using System.Text;
+using System.Threading;
 
 namespace Storage.Net.Sample
 {
@@ -34,20 +36,42 @@ namespace Storage.Net.Sample
 
             Console.WriteLine("raw memory storage");
             await TryRawStorage("test", rawMemoryStorage);
+
+            Console.WriteLine("Concurrent writes and reads");
+
+            var tasks = Enumerable.Repeat(Enumerable.Range(1, 3).ToList(), 3)
+                .SelectMany(x => x)
+                .Select(x => TryRawStorage(x.ToString(), rawMemoryStorage));
+
+            await Task.WhenAll(tasks);
         }
 
         private static async Task TryStorage(string key, ObjectStorageClient fileStorage)
         {
-            await fileStorage.WriteAsync(key, new Model { Value = 5 });
-            Model res = await fileStorage.ReadAsync<Model>(key);
-            Console.WriteLine(res?.ToString() ?? "null"); ;
+            Model model = new Model { Value = 5 };
+
+            Console.WriteLine($"thread [{Thread.CurrentThread.ManagedThreadId}] wrote message: [{model}] to key [{key}].");
+
+            await fileStorage.WriteAsync(key, model);
+
+            model = await fileStorage.ReadAsync<Model>(key);
+
+            Console.WriteLine($"thread [{Thread.CurrentThread.ManagedThreadId}] read message: [{model}] from key [{key}].");
         }
 
         private static async Task TryRawStorage(string key, RawStorageClient fileStorage)
         {
-            await fileStorage.WriteAsync(key, new byte[] { 1, 2, 3 });
+            string message = $"hello storage {key}";
+
+            Console.WriteLine($"thread [{Thread.CurrentThread.ManagedThreadId}] wrote message: [{message}] to key [{key}].");
+
+            byte[] encodedMessage = Encoding.UTF8.GetBytes(message);
+            await fileStorage.WriteAsync(key, encodedMessage);
+
             byte[] content = await fileStorage.ReadRawAsync(key);
-            Console.WriteLine(string.Join(", ", content)); ;
+            string decodedMessage = Encoding.UTF8.GetString(content);
+
+            Console.WriteLine($"thread [{Thread.CurrentThread.ManagedThreadId}] read message: [{message}] from key [{key}].");
         }
     }
 }

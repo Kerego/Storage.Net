@@ -18,7 +18,6 @@ namespace Storage.Net.Core
 
         public async Task WriteAsync(string key, byte[] data, bool replace = true)
         {
-            //ideally this would be handled by non nullable reference type in C# 8
             if (String.IsNullOrEmpty(key))
                 throw new ArgumentException($"key should not be null or empty string", nameof(key));
             if (data is null)
@@ -35,11 +34,11 @@ namespace Storage.Net.Core
             if (data is null)
                 throw new ArgumentNullException(nameof(data), "Cannot write null data");
 
-            if (!_storageProvider.IsThreadSafe)
-                await _semaphore.WaitAsync(key);
-
             try
             {
+                if (!_storageProvider.IsThreadSafe)
+                    await _semaphore.WaitAsync(key);
+
                 if (await _storageProvider.ExistsAsync(key).ConfigureAwait(false))
                 {
                     if (replace)
@@ -62,13 +61,14 @@ namespace Storage.Net.Core
             if (String.IsNullOrEmpty(key))
                 throw new ArgumentException($"key should not be null or empty string", nameof(key));
 
-            if (!await _storageProvider.ExistsAsync(key))
-                return null;
-
-            if (!_storageProvider.IsThreadSafe)
-                await _semaphore.WaitAsync(key);
             try
             {
+                if (!_storageProvider.IsThreadSafe)
+                    await _semaphore.WaitAsync(key);
+
+                if (!await _storageProvider.ExistsAsync(key))
+                    return null;
+
                 return await _storageProvider.ReadAsync(key);
             }
             finally

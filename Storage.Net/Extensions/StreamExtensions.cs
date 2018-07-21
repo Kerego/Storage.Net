@@ -17,7 +17,12 @@ namespace Storage.Net.Extensions
                 stream.Position = 0;
 
             var memoryStream = new MemoryStream();
-            await stream.CopyToAsync(memoryStream).ConfigureAwait(false);
+            // memoryStream.CopyToAsync is synchroneus, schedule work to another thread in that case
+
+            if (stream is MemoryStream ms)
+                await Task.Run(() => stream.CopyTo(memoryStream)).ConfigureAwait(false);
+            else
+                await stream.CopyToAsync(memoryStream).ConfigureAwait(false);
 
             memoryStream.Position = 0;
             return memoryStream;
